@@ -1,39 +1,45 @@
+// app/api/transactions/route.ts
+
 import { NextResponse } from 'next/server';
-import { auth } from "@/auth";
 import { createClient } from '@supabase/supabase-js';
+import { auth } from "@/auth";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function POST(req: Request) {
-  const session = await auth();
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const session = auth();
   const user_email = session?.user?.email;
   const { name, type, amount, category_id } = await req.json();
 
-  if (!user_email || !name || !['income', 'expense'].includes(type) || typeof amount !== 'number') {
+  if (!name || !['income', 'expense'].includes(type) || typeof amount !== 'number') {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
   }
 
   const { data, error } = await supabase
     .from('transactions')
-    .insert([{ user_email, name, type, amount, category_id }]);
+    .update({ name, type, amount, category_id })
+    .eq('id', params.id)
+    .eq('user_email', user_email)
+    .select()
+    .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true, data });
 }
 
-export async function GET() {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const session = await auth();
   const user_email = session?.user?.email;
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('transactions')
-    .select('*')
-    .eq('user_email', user_email)
-    .order('created_at', { ascending: false });
+    .delete()
+    .eq('id', params.id)
+    .eq('user_email', user_email);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ data });
+  return NextResponse.json({ success: true });
 }

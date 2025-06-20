@@ -10,15 +10,15 @@ const supabase = createClient(
 export async function POST(req: Request) {
   const session = await auth();
   const user_email = session?.user?.email;
-  const { name, type, amount, category_id } = await req.json();
+  const { name, budget_limit } = await req.json();
 
-  if (!user_email || !name || !['income', 'expense'].includes(type) || typeof amount !== 'number') {
-    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  if (!user_email || !name) {
+    return NextResponse.json({ error: 'Missing user or name' }, { status: 400 });
   }
 
   const { data, error } = await supabase
-    .from('transactions')
-    .insert([{ user_email, name, type, amount, category_id }]);
+    .from('categories')
+    .insert([{ user_email, name, budget_limit }]);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true, data });
@@ -28,11 +28,12 @@ export async function GET() {
   const session = await auth();
   const user_email = session?.user?.email;
 
+  if (!user_email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { data, error } = await supabase
-    .from('transactions')
+    .from('categories')
     .select('*')
-    .eq('user_email', user_email)
-    .order('created_at', { ascending: false });
+    .eq('user_email', user_email);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data });
