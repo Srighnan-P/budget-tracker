@@ -35,6 +35,14 @@ export const { handlers, auth } = NextAuth({
           .insert({ email });
 
         if (insertError) {
+          // If error is duplicate key, treat as success
+          if (
+            insertError.message.includes('duplicate key value') ||
+            insertError.message.includes('already exists')
+          ) {
+            // User already exists, treat as success
+            return true;
+          }
           console.error('Failed to insert user:', insertError.message);
           return false;
         }
