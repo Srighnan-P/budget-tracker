@@ -18,9 +18,9 @@ export default function Home({children}: {children: React.ReactNode}) {
     return (
     <div className="flex h-screen">
       <Menu />
-      <main className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-auto">
         {children}
-      </main>
+      </div>
     </div>
     );
   }
