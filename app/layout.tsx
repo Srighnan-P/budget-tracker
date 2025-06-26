@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./components/theme-provider";
+import Menu from "./components/Menu"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+          <div className="flex h-screen">
+      <Menu />
+      <div className="flex-1 p-6 overflow-y-auto">
+        {children}
+      </div>
+    </div>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

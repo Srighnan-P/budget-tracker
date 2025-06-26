@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react'
 import SideBar from './SideBar'
 import {Menu as MenuIcon, X} from 'lucide-react'
