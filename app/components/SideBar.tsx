@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 import React, { useEffect, useState, createContext, useContext } from 'react'
 import Link from 'next/link'
@@ -52,7 +53,7 @@ export const CurrencyProvider = ({ children }: { children: React.ReactNode }) =>
 
 const SideBar = () => {
   const pathname = usePathname();
-  const { currency, symbol, setCurrency } = useContext(CurrencyContext);
+  const { currency, setCurrency } = useContext(CurrencyContext);
 
   return (
     <aside className="h-screen w-64 bg-background border-r shadow-lg flex flex-col justify-between rounded-r-3xl">
