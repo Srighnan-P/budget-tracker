@@ -11,7 +11,7 @@ const supabase = createClient(
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.email) return NextResponse.json({ error: 'You must be logged in to view this transaction.' }, { status: 401 });
 
   const { id } = await params;
   const { data, error } = await supabase
@@ -21,18 +21,27 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     .eq('user_email', session.user.email)
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 404 });
+  if (error) {
+    console.error('GET /api/transactions/[id] error:', error);
+    return NextResponse.json({ error: 'Transaction not found or you do not have access.' }, { status: 404 });
+  }
   return NextResponse.json({ data });
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.email) return NextResponse.json({ error: 'You must be logged in to update this transaction.' }, { status: 401 });
 
   const { id } = await params;
   const { name, type, amount } = await req.json();
-  if (!name || !['income', 'expense'].includes(type) || typeof amount !== 'number') {
-    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  if (!name) {
+    return NextResponse.json({ error: "The 'name' field is required to update a transaction." }, { status: 400 });
+  }
+  if (!['income', 'expense'].includes(type)) {
+    return NextResponse.json({ error: "The 'type' field must be either 'income' or 'expense'." }, { status: 400 });
+  }
+  if (typeof amount !== 'number') {
+    return NextResponse.json({ error: "The 'amount' field must be a number." }, { status: 400 });
   }
 
   const { data, error } = await supabase
@@ -43,13 +52,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('PUT /api/transactions/[id] error:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred while updating the transaction. Please try again later.' }, { status: 500 });
+  }
   return NextResponse.json({ data });
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.email) return NextResponse.json({ error: 'You must be logged in to delete this transaction.' }, { status: 401 });
 
   const { id } = await params;
   const { error } = await supabase
@@ -58,7 +70,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     .eq('id', id)
     .eq('user_email', session.user.email);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('DELETE /api/transactions/[id] error:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred while deleting the transaction. Please try again later.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true });
 }
 

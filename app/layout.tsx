@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./components/theme-provider";
-import Menu from "./components/Menu"
+import { LayoutContent } from "./components/layout-content";
+import { CurrencyProvider } from "./components/SideBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,23 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+        <ThemeProvider>
           <SessionProvider>
-          <div className="flex h-screen">
-      <Menu />
-      <div className="flex-1 p-6 overflow-y-auto">
-        {children}
-      </div>
-    </div>
+            <CurrencyProvider>
+              <LayoutContent>
+                {children}
+              </LayoutContent>
+            </CurrencyProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>

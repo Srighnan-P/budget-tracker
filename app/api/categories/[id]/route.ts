@@ -12,6 +12,13 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const user_email = session?.user?.email;
   const { name, budget_limit } = await req.json();
 
+  if (!user_email) {
+    return NextResponse.json({ error: 'You must be logged in to update a category.' }, { status: 401 });
+  }
+  if (!name) {
+    return NextResponse.json({ error: "The 'name' field is required to update a category." }, { status: 400 });
+  }
+
   const { data, error } = await supabase
     .from('categories')
     .update({ name, budget_limit })
@@ -20,7 +27,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('PUT /api/categories/[id] error:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred while updating the category. Please try again later.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true, data });
 }
 
@@ -28,12 +38,19 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
   const session = await auth();
   const user_email = session?.user?.email;
 
+  if (!user_email) {
+    return NextResponse.json({ error: 'You must be logged in to delete a category.' }, { status: 401 });
+  }
+
   const { error } = await supabase
     .from('categories')
     .delete()
     .eq('id', params.id)
     .eq('user_email', user_email);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('DELETE /api/categories/[id] error:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred while deleting the category. Please try again later.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true });
 }
