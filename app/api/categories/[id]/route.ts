@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { auth } from "@/auth";
 import { createClient } from '@supabase/supabase-js';
 
@@ -8,9 +8,10 @@ const supabase = createClient(
 );
 
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
+  const { params } = await context;
   const session = await auth();
   const user_email = session?.user?.email;
   const { name, budget_limit } = await req.json();
