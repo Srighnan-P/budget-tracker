@@ -1,3 +1,4 @@
+// eslint.config.mjs
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
@@ -12,10 +13,11 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals"),
   {
+    files: ["**/*.ts", "**/*.tsx"],
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn", // or "off"
-    }
-  }
+      "@typescript-eslint/no-unused-vars": ["warn"], // or "off"
+    },
+  },
 ];
 
 export default eslintConfig;

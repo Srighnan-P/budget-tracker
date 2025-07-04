@@ -9,9 +9,8 @@ const supabase = createClient(
 
 export async function PUT(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { params } = context;
   const session = await auth();
   const user_email = session?.user?.email;
   const { name, budget_limit } = await req.json();
