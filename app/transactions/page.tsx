@@ -183,7 +183,7 @@ export default function TransactionsPage() {
         }}
         categories={categories}
         form={form}
-        setForm={setForm}
+        setForm={setForm as React.Dispatch<React.SetStateAction<TransactionForm>>}
         isEditing={isEditing}
       />
       {confirmOpen && (
