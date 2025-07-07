@@ -2,6 +2,7 @@
 import {signIn, useSession} from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { FullPageLoading } from '@/components/ui/loading';
 
 
 function handleSignIn() {
@@ -19,7 +20,7 @@ export default function LoginPage() {
   }, [status, router]);
 
   if (status === 'loading') {
-    return <div className="text-white">Loading...</div>;
+    return <FullPageLoading text="Checking authentication..." />;
   }
 
   return (

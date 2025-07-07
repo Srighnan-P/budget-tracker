@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import TransactionModal from "../components/TransactionModal";
 import { CurrencyContext } from '../components/SideBar';
+import { FullPageLoading } from '@/components/ui/loading';
 
 type Transaction = {
   id: number;
@@ -129,11 +130,7 @@ const Dashboard = () => {
 
   // Show loading while checking auth
   if (status === 'loading' || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-lg">Loading...</div>
-      </div>
-    )
+    return <FullPageLoading text="Loading your dashboard..." />
   }
 
   // Redirect to login if not authenticated
