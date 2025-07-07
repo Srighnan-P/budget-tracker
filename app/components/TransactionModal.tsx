@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 
-type TransactionForm = {
+export type TransactionForm = {
   name: string;
   type: 'income' | 'expense';
   amount: string;

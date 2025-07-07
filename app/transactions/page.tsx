@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
 import { Trash2, Edit2, Plus } from "lucide-react";
-import TransactionModal from "../components/TransactionModal";
+import TransactionModal, { TransactionForm } from "../components/TransactionModal";
 import { CurrencyContext } from '../components/SideBar';
 
 type Transaction = {
@@ -25,7 +25,7 @@ type Category = {
 export default function TransactionsPage() {
   const [filter, setFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<TransactionForm>({
     name: '',
     type: 'income',
     amount: '',
@@ -183,7 +183,7 @@ export default function TransactionsPage() {
         }}
         categories={categories}
         form={form}
-        setForm={setForm as React.Dispatch<React.SetStateAction<TransactionForm>>}
+        setForm={setForm}
         isEditing={isEditing}
       />
       {confirmOpen && (

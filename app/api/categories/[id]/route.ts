@@ -9,9 +9,9 @@ const supabase = createClient(
 
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { params } = await context;
+  const params = await context.params;
   const session = await auth();
   const user_email = session?.user?.email;
   const { name, budget_limit } = await req.json();
@@ -38,7 +38,11 @@ export async function PUT(
   return NextResponse.json({ success: true, data });
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: Request, 
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params;
   const session = await auth();
   const user_email = session?.user?.email;
 
