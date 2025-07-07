@@ -10,7 +10,7 @@ export const supabase = createClient(
 );
 
 // For server-side usage (like in API routes or server components)
-export const supabaseAdmin = createBrowserClient(
+export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
